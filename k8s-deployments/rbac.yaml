@@ -1,0 +1,69 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: k8s-namespace-full-access-role
+  namespace: k8s-namespace
+rules:
+  - apiGroups: ["","extensions", "apps", "storage.k8s.io"]
+    resources: ["*"]
+    verbs:     ["*"]
+
+---
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: k8s-namespace-full-access-role-binding
+  namespace: k8s-namespace
+subjects:
+  - kind: ServiceAccount
+    name: k8s-namespace
+    namespace: k8s-namespace
+roleRef:
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+  name: k8s-namespace-full-access-role
+
+---
+
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: k8s-namespace-integration-access-role
+  namespace: k8s-namespace
+rules:
+  - apiGroups: ["","extensions", "apps"]
+    resources: ["*"]
+    verbs:     ["create","get","describe","delete","list","watch", "patch", "update"]
+  - apiGroups: ["networking.istio.io"]
+    resources: ["gateways", "virtualservices"]
+    verbs:     ["create","get","describe","delete","list","watch"]
+
+---
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: k8s-namespace-integration-access-role-binding
+  namespace: k8s-namespace
+subjects:
+  - kind: ServiceAccount
+    name: k8s-namespace
+    namespace: k8s-namespace
+roleRef:
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+  name: k8s-namespace-integration-access-role
+
+---
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: k8s-namespace
+  namespace: k8s-namespace
+
