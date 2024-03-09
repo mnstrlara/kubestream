@@ -97,7 +97,7 @@ Resources:
           sudo sh get-docker.sh
           sudo usermod -aG docker ec2-user
           
-          # Install Kubernetes components (kubeadm, kubectl, kubelet)
+          # Install Kubernetes components (kubeadm, kubectl, kubelet, kind)
           curl -LO "https://dl.k8s.io/release/v1.27.4/bin/linux/amd64/kubectl"
           curl -LO "https://dl.k8s.io/release/v1.27.4/bin/linux/amd64/kubectl.sha256"
           install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
@@ -109,7 +109,11 @@ Resources:
           apt-get install -y kubectl
           sudo snap install kubeadm --classic
           sudo snap install kubelet --classic
-          apt-mark hold kubelet kubeadm kubectl
+          apt-mark hold kubelet kubeadm kubectl        
+          [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo cp ./kind /usr/local/bin/kind
+          rm -rf kind
 
           # Install Helm
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
@@ -125,13 +129,6 @@ Resources:
           # Install FluxCD
           curl -s https://fluxcd.io/install.sh | sudo bash
           
-          # Install Flagger
-          kubectl apply -k github.com/fluxcd/flagger//kustomize/aws
-          
-          # Install CDK
-          sudo apt install -y npm
-          npm install -g aws-cdk
-          
           # Install K9s
           wget https://github.com/derailed/k9s/releases/download/v0.24.7/k9s_Linux_x86_64.tar.gz
           tar -xzvf k9s_Linux_x86_64.tar.gz
@@ -139,3 +136,7 @@ Resources:
           
           # Add kubectl bash completion
           echo "source <(kubectl completion bash)" >> ~/.bashrc
+          
+          # Create Kubernetes Cluster fluxcd
+          sudo kind create cluster --name fluxcd
+
