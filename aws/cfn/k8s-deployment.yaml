@@ -4,10 +4,10 @@ Description: Create an EC2 instance with a Kubernetes cluster
 Parameters:
   VPC:
     Type: String
-    Default: vpc-0017e873a1216dee3
+    Default: vpc-03d7de7693d498fe6
   Subnet:
     Type: String
-    Default: subnet-072d37834615128a1
+    Default: subnet-023e195c161c8b85b
   KeyPair:
     Type: String
     Default: K8s-Deployment
@@ -31,35 +31,6 @@ Resources:
               Service: cloudformation.amazonaws.com
             Action: sts:AssumeRole
 
-
-  InternetGateway:
-    Type: AWS::EC2::InternetGateway
-
-  AttachGateway:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      VpcId: !Ref VPC
-      InternetGatewayId: !Ref InternetGateway
-
-  RouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-
-  Route:
-    Type: AWS::EC2::Route
-    DependsOn: AttachGateway
-    Properties:
-      RouteTableId: !Ref RouteTable
-      DestinationCidrBlock: '0.0.0.0/0'
-      GatewayId: !Ref InternetGateway
-
-  SubnetRouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref Subnet
-      RouteTableId: !Ref RouteTable
-
   K8sSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -69,42 +40,46 @@ Resources:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 10.0.0.0/8
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
-          CidrIp: 10.0.0.0/8
+          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 6443
           ToPort: 6443
-          CidrIp: 10.0.0.0/8
+          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 2379
           ToPort: 2380
-          CidrIp: 10.0.0.0/8
+          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 10250
           ToPort: 10252
-          CidrIp: 10.0.0.0/8
+          CidrIp: 0.0.0.0/0
         - IpProtocol: udp
           FromPort: 6783
           ToPort: 6784
-          CidrIp: 10.0.0.0/8
+          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 6783
           ToPort: 6783
-          CidrIp: 10.0.0.0/8
+          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 2049
           ToPort: 2049
-          CidrIp: 10.0.0.0/8
+          CidrIp: 0.0.0.0/0
 
 
   K8sInstance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref AMI
-      InstanceType: t2.micro
+      InstanceType: t2.small
       SecurityGroupIds:
         - !Ref K8sSecurityGroup
       SubnetId: !Ref Subnet
@@ -122,14 +97,20 @@ Resources:
           sudo sh get-docker.sh
           sudo usermod -aG docker ec2-user
           
-          # Install Kubernetes components (kubeadm, kubectl)
-          sudo apt-get update && sudo apt-get install -y apt-transport-https curl
-          curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-          echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-          sudo apt-get update
-          sudo apt-get install -y kubelet kubeadm kubectl
-          sudo apt-mark hold kubelet kubeadm kubectl
-          
+          # Install Kubernetes components (kubeadm, kubectl, kubelet)
+          curl -LO "https://dl.k8s.io/release/v1.27.4/bin/linux/amd64/kubectl"
+          curl -LO "https://dl.k8s.io/release/v1.27.4/bin/linux/amd64/kubectl.sha256"
+          install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          apt-get update
+          apt-get install -y apt-transport-https ca-certificates curl
+          curl -fsSL "https://dl.k8s.io/apt/doc/apt-key.gpg" | gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+          echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+          apt-get update
+          apt-get install -y kubectl
+          sudo snap install kubeadm --classic
+          sudo snap install kubelet --classic
+          apt-mark hold kubelet kubeadm kubectl
+
           # Install Helm
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
           chmod 700 get_helm.sh
@@ -137,6 +118,7 @@ Resources:
           
           # Install AWS CLI
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          sudo apt install unzip
           unzip awscliv2.zip
           sudo ./aws/install
           
@@ -147,6 +129,7 @@ Resources:
           kubectl apply -k github.com/fluxcd/flagger//kustomize/aws
           
           # Install CDK
+          sudo apt install -y npm
           npm install -g aws-cdk
           
           # Install K9s
