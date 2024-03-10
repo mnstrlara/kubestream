@@ -30,6 +30,10 @@ Resources:
             Principal:
               Service: cloudformation.amazonaws.com
             Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+        - arn:aws:iam::aws:policy/AWSCloudFormationFullAccess
+        - arn:aws:iam::aws:policy/AWSCloudDevelopmentKitReadOnlyAccess
 
   K8sSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -139,4 +143,3 @@ Resources:
           
           # Create Kubernetes Cluster fluxcd
           sudo kind create cluster --name fluxcd
-
