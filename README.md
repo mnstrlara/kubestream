@@ -12,3 +12,8 @@ FluxCD will be used to automate the deployment of the application. It will watch
 Flagger will be used for progressive delivery, enabling canary deployments and automated analysis of metrics (e.g., latency, error rates) to determine whether to promote or rollback a new version of the application.
 ### 4. CDK (AWS Cloud Development Kit)
 CDK will be used to provision and manage AWS resources required by the application.
+
+## Pre-requisites:
+- AWS Root account created and available
+- AWS CLI installed on local machine
+- AWS CDK installed on local machine
