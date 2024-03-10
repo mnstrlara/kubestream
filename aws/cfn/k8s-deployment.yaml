@@ -30,10 +30,6 @@ Resources:
             Principal:
               Service: cloudformation.amazonaws.com
             Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
-        - arn:aws:iam::aws:policy/AWSCloudFormationFullAccess
-        - arn:aws:iam::aws:policy/AWSCloudDevelopmentKitReadOnlyAccess
 
   K8sSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -101,7 +97,7 @@ Resources:
           sudo sh get-docker.sh
           sudo usermod -aG docker ec2-user
           
-          # Install Kubernetes components (kubeadm, kubectl, kubelet, kind)
+          # Install Kubernetes components (kubeadm, kubectl, kind)
           curl -LO "https://dl.k8s.io/release/v1.27.4/bin/linux/amd64/kubectl"
           curl -LO "https://dl.k8s.io/release/v1.27.4/bin/linux/amd64/kubectl.sha256"
           install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
@@ -112,7 +108,6 @@ Resources:
           apt-get update
           apt-get install -y kubectl
           sudo snap install kubeadm --classic
-          sudo snap install kubelet --classic
           apt-mark hold kubelet kubeadm kubectl        
           [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
           chmod +x ./kind
@@ -123,12 +118,6 @@ Resources:
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
           chmod 700 get_helm.sh
           ./get_helm.sh
-          
-          # Install AWS CLI
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          sudo apt install unzip
-          unzip awscliv2.zip
-          sudo ./aws/install
           
           # Install FluxCD
           curl -s https://fluxcd.io/install.sh | sudo bash
