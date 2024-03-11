@@ -17,3 +17,30 @@ CDK will be used to provision and manage AWS resources required by the applicati
 - AWS Root account created and available
 - AWS CLI installed on local machine
 - AWS CDK installed on local machine
+
+## Steps
+### 1. Kubernetes Deployment Flow using CDK
+After following the documentation on installing CDK and running the cdk bootstrap command, the next step would be to deploy the template using the
+`cdk deploy` command. After running the command it should prompt you on whether you are sure about deploying the template to AWS CloudFormation.
+After typing `y` the command is going to automatically create a change set in AWS CloudFormation and then deploy the stack.
+
+### 2. Inside the Instance/Cluster
+After SSHing inside the EC2 Instance, check if all of the components that are part of the `userData.sh`
+have been successfully installed/created; if they have, the next part would be to set up our FluxCD. Since we have
+already installed FluxCD with the userdata, all we have to do is run the bootstrap command. 
+But before we get to do that we should check our prerequisites with the `flux check --pre` command. If all the checks passed, we can now run our bootstrap command.
+
+Example:
+```bash
+flux bootstrap github \
+  --owner=$GITHUB_USER \
+  --repository=example-name \
+  --branch=main \
+  --path=./example-path \
+  --personal
+```
+After applying this command, your terminal is going to ask you for your GitHub PAT(Personal Access Token) which you can create in your GitHub Settings.
+
+This bootstrap command is going to push the Flux manifests to your Git repository and deploy Flux to your cluster.
+
+### 3. Flagger Progressive Delivery
