@@ -45,6 +45,12 @@ func env() *awscdk.Environment {
 	}
 }
 
+func GetUserData() string {
+	script, _ := os.ReadFile("userData.sh")
+
+	return string(script)
+}
+
 func NewRole(stack awscdk.Stack) awsiam.Role {
 	k8sRole := awsiam.NewRole(stack, jsii.String("K8sRole"), &awsiam.RoleProps{
 		AssumedBy: awsiam.NewCompositePrincipal(
@@ -125,12 +131,15 @@ func CreateSecurityGroup(stack awscdk.Stack) awsec2.CfnSecurityGroup {
 }
 
 func CreateEC2Instance(stack awscdk.Stack, secGroup awsec2.CfnSecurityGroup) awsec2.CfnInstance {
+	userData := GetUserData()
+
 	props := awsec2.CfnInstanceProps{
 		ImageId:          jsii.String(AmiID),
 		InstanceType:     jsii.String("t2.small"),
 		SecurityGroupIds: jsii.Strings(*secGroup.AttrGroupId()),
 		SubnetId:         jsii.String(SubnetID),
 		KeyName:          jsii.String(EC2KeyPair),
+		UserData:         awscdk.Fn_Base64(&userData),
 	}
 
 	K8sInstance := awsec2.NewCfnInstance(stack, jsii.String("K8sInstance"), &props)
