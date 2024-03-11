@@ -1,0 +1,17 @@
+apiVersion: flagger.app/v1beta3
+kind: Canary
+metadata:
+  name: canarydeployment
+  namespace: istio-system
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: myapp
+  service:
+    port: 80
+  analysis:
+    interval: 1m
+    threshold: 10
+    maxWeight: 50
+    stepWeight: 10
