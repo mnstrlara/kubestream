@@ -135,7 +135,7 @@ func CreateEC2Instance(stack awscdk.Stack, secGroup awsec2.CfnSecurityGroup) aws
 
 	props := awsec2.CfnInstanceProps{
 		ImageId:          jsii.String(AmiID),
-		InstanceType:     jsii.String("t2.small"),
+		InstanceType:     jsii.String("t2.medium"),
 		SecurityGroupIds: jsii.Strings(*secGroup.AttrGroupId()),
 		SubnetId:         jsii.String(SubnetID),
 		KeyName:          jsii.String(EC2KeyPair),

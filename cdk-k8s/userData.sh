@@ -7,20 +7,18 @@ sudo apt-get install -y apt-transport-https ca-certificates curl software-proper
 # Install Docker
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
+sudo useradd ec2-user
 sudo usermod -aG docker ec2-user
 
 # Install Kubernetes components (kubeadm, kubectl, kind)
-curl -LO "https://dl.k8s.io/release/v1.27.4/bin/linux/amd64/kubectl"
-curl -LO "https://dl.k8s.io/release/v1.27.4/bin/linux/amd64/kubectl.sha256"
-install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-apt-get update
-apt-get install -y apt-transport-https ca-certificates curl
-curl -fsSL "https://dl.k8s.io/apt/doc/apt-key.gpg" | gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
-apt-get update
-apt-get install -y kubectl
+sudo curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 sudo snap install kubeadm --classic
-apt-mark hold kubelet kubeadm kubectl
+apt-mark hold kubeadm kubectl
 [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
 chmod +x ./kind
 sudo cp ./kind /usr/local/bin/kind
@@ -54,7 +52,7 @@ sudo helm install istio-base istio/base -n istio-system --set defaultRevision=de
 # Add repo and install Flagger
 sudo helm repo add flagger https://flagger.app
 sudo kubectl apply -f https://raw.githubusercontent.com/fluxcd/flagger/main/artifacts/flagger/crd.yaml
-helm upgrade -i flagger flagger/flagger \
+sudo helm upgrade -i flagger flagger/flagger \
 --namespace=istio-system \
 --set crd.create=false \
 --set meshProvider=istio \
