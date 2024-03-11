@@ -1,8 +1,8 @@
 apiVersion: flagger.app/v1alpha3
 kind: Canary
 metadata:
-  name: nginx-canary
-  namespace: istio-system
+  name: nginx
+  namespace: k8s-deployment
 spec:
   targetRef:
     apiVersion: apps/v1
