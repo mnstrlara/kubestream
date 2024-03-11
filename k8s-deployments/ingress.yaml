@@ -49,7 +49,6 @@ spec:
             - create
             - --host=k8s-deployment-controller-admission,k8s-deployment-controller-admission.$(POD_NAMESPACE).svc
             - --namespace=$(POD_NAMESPACE)
-            - --secret-name=k8s-deployment-admission
           env:
             - name: POD_NAMESPACE
               valueFrom:
