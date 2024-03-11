@@ -44,3 +44,18 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 
 # Create Kubernetes Cluster fluxcd
 sudo kind create cluster --name fluxcd
+
+# Add repo and install Istio + create istio namespace
+sudo helm repo add istio https://istio-release.storage.googleapis.com/charts
+sudo helm repo update
+sudo kubectl create namespace istio-system
+sudo helm install istio-base istio/base -n istio-system --set defaultRevision=default
+
+# Add repo and install Flagger
+sudo helm repo add flagger https://flagger.app
+sudo kubectl apply -f https://raw.githubusercontent.com/fluxcd/flagger/main/artifacts/flagger/crd.yaml
+helm upgrade -i flagger flagger/flagger \
+--namespace=istio-system \
+--set crd.create=false \
+--set meshProvider=istio \
+--set metricsServer=http://prometheus:9090
