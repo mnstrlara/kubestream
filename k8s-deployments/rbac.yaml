@@ -1,8 +1,8 @@
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: k8s-namespace-full-access-role
-  namespace: k8s-namespace
+  name: k8s-deployment-full-access-role
+  namespace: k8s-deployment
 rules:
   - apiGroups: ["","extensions", "apps", "storage.k8s.io"]
     resources: ["*"]
@@ -14,16 +14,16 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: k8s-namespace-full-access-role-binding
-  namespace: k8s-namespace
+  name: k8s-deployment-full-access-role-binding
+  namespace: k8s-deployment
 subjects:
   - kind: ServiceAccount
-    name: k8s-namespace
-    namespace: k8s-namespace
+    name: k8s-deployment
+    namespace: k8s-deployment
 roleRef:
   kind: Role
   apiGroup: rbac.authorization.k8s.io
-  name: k8s-namespace-full-access-role
+  name: k8s-deployment-full-access-role
 
 ---
 
@@ -31,8 +31,8 @@ roleRef:
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: k8s-namespace-integration-access-role
-  namespace: k8s-namespace
+  name: k8s-deployment-integration-access-role
+  namespace: k8s-deployment
 rules:
   - apiGroups: ["","extensions", "apps"]
     resources: ["*"]
@@ -47,16 +47,16 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: k8s-namespace-integration-access-role-binding
-  namespace: k8s-namespace
+  name: k8s-deployment-integration-access-role-binding
+  namespace: k8s-deployment
 subjects:
   - kind: ServiceAccount
-    name: k8s-namespace
-    namespace: k8s-namespace
+    name: k8s-deployment
+    namespace: k8s-deployment
 roleRef:
   kind: Role
   apiGroup: rbac.authorization.k8s.io
-  name: k8s-namespace-integration-access-role
+  name: k8s-deployment-integration-access-role
 
 ---
 
@@ -64,6 +64,6 @@ roleRef:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: k8s-namespace
-  namespace: k8s-namespace
+  name: k8s-deployment
+  namespace: k8s-deployment
 
