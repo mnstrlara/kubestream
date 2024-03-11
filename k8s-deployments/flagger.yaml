@@ -1,16 +1,16 @@
 apiVersion: flagger.app/v1beta1
 kind: Canary
 metadata:
-  name: canarydeployment
+  name: nginx-canary
   namespace: istio-system
 spec:
   targetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: nginx
+    name: nginx   # Name of the Deployment to watch
   selector:
     matchLabels:
-      app: nginx   # Label selector matching the labels of the pods managed by the deployment
+      app: nginx   # Label selector matching the labels of the pods managed by the Deployment
   service:
     port: 80
   analysis:
