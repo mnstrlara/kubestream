@@ -8,6 +8,9 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: nginx
+  selector:
+    matchLabels:
+      app: nginx   # Label selector matching the labels of the pods managed by the deployment
   service:
     port: 80
   analysis:
