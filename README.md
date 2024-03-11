@@ -41,6 +41,6 @@ flux bootstrap github \
 ```
 After applying this command, your terminal is going to ask you for your GitHub PAT(Personal Access Token) which you can create in your GitHub Settings.
 
-This bootstrap command is going to push the Flux manifests to your Git repository and deploy Flux to your cluster.
+This bootstrap command is going to push the Flux manifests to your Git repository and deploy Flux to your cluster. And as it becomes a part of your Git repository, since it is located in the path where your Kubernetes manifests are located, it will automatically deploy your manifests to your cluster without any extra commands.
 
 ### 3. Flagger Progressive Delivery
