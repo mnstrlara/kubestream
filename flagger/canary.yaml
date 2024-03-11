@@ -7,14 +7,24 @@ spec:
   targetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: nginx   # Name of the Deployment to watch
-  selector:
-    matchLabels:
-      app: nginx   # Label selector matching the labels of the pods managed by the Deployment
+    name: nginx
   service:
     port: 80
+    targetPort: 8080
   analysis:
     interval: 1m
-    threshold: 10
+    threshold: 5
     maxWeight: 50
     stepWeight: 10
+    metrics:
+    - name: request-success-rate
+      thresholdRange:
+        min: 99
+      interval: 1m
+    - name: request-duration
+      thresholdRange:
+        max: 500
+      interval: 1m
+  providers:
+    prometheus:
+      address: http://prometheus:9090
