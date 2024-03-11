@@ -2,29 +2,19 @@ apiVersion: flagger.app/v1beta1
 kind: Canary
 metadata:
   name: nginx
-  namespace: k8s-deployment
+  namespace: istio-system
 spec:
   targetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: nginx
+  selector:
+    matchLabels:
+      app: nginx   # Label selector matching the labels of the pods managed by the deployment
   service:
     port: 80
-    targetPort: 8080
   analysis:
     interval: 1m
-    threshold: 5
+    threshold: 10
     maxWeight: 50
     stepWeight: 10
-    metrics:
-    - name: request-success-rate
-      thresholdRange:
-        min: 99
-      interval: 1m
-    - name: request-duration
-      thresholdRange:
-        max: 500
-      interval: 1m
-  providers:
-    prometheus:
-      address: http://prometheus:9090
