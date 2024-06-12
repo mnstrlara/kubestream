@@ -1,4 +1,4 @@
-# Continuous Deployment of Kubernetes using FluxCD, Flagger, and CDK
+# GitOps-Enabled Kubernetes Deployment with FluxCD, Flagger, and CDK
 
 ## Objective:
 The objective of this project is to set up a continuous deployment pipeline for a sample application using FluxCD for GitOps-style continuous delivery, Flagger for progressive delivery (canary deployments), and CDK for infrastructure as code (IaC) to provision and manage AWS resources.
